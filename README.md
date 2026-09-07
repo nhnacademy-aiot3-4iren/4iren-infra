@@ -93,6 +93,6 @@ docker compose up -d
 프로젝트와 관련된 상세한 문서, 아키텍처 설계도, 회의록 등은 아래의 링크에서 확인하실 수 있습니다.
 
 - **[GitHub Wiki](https://github.com/nhnacademy-aiot3-4iren/4iren-infra/wiki)**: CI/CD 연동 방법, 각 서버별 무중단 롤링 배포 전략, Nginx 설정 등 기술적인 세부 가이드
-- **[Notion 개인 페이지](https://app.notion.com/p/39ef42d465328052969dedada9ae7849?source=copy_link)**: 인프라 관련 사용 기술 사용 이유 & 장단점 정리
+- **[Notion 개인 페이지](https://app.notion.com/p/4iren-infra-c9962f6bf7bf8273859b0152cc8e96a8?source=copy_link)**: 인프라 관련 사용 기술 사용 이유 & 장단점 정리
 
 개발 및 운영 시 반드시 위 문서들을 먼저 숙지해 주세요.
