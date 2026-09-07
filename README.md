@@ -2,7 +2,7 @@
 
 이 레포지토리는 **4iren 프로젝트**의 전체 인프라 구성, CI/CD 배포 파이프라인을 모아둔 레파지토리 입니다.
 
-> 💡 **자세한 설명과 가이드라인은 [Wiki](https://github.com/nhnacademy-aiot3-4iren/4iren-infra/wiki)를 참고해 주세요!**
+> **자세한 설명과 가이드라인은 [Wiki](https://github.com/nhnacademy-aiot3-4iren/4iren-infra/wiki)를 참고해 주세요!**
 > 본 README는 전체적인 구조와 빠른 실행 방법만 요약해서 제공합니다.
 
 ---
