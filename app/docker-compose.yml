@@ -1,0 +1,198 @@
+name: 4iren-app
+
+# 공통 템플릿 (모든 서버 공유)
+x-common-template: &common-template
+  networks: [ team4-aiot-network ]
+  restart: always
+  env_file:
+    - .env
+  logging:
+    driver: "json-file"
+    options:
+      max-size: "10m"
+      max-file: "3"
+
+# 공통 템플릿에 유레카와 컨피그 서버 시작을 기다리는 설정을 추가한 템플릿
+x-depends-template: &depends-template
+  <<: *common-template
+  restart: unless-stopped
+  depends_on:
+    - team4-config-1
+    - team4-config-2
+    - team4-eureka-1
+    - team4-eureka-2
+
+# 서비스 별 템플릿
+x-front-template: &front-base
+  <<: *depends-template
+  image: ghcr.io/${DOCKER_USERNAME}/team4-front:latest
+  environment:
+    SPRING_APPLICATION_NAME: 4iren-front
+
+x-gateway-template: &gateway-base
+  <<: *depends-template
+  image: ghcr.io/${DOCKER_USERNAME}/team4-gateway:latest
+  environment:
+    SPRING_APPLICATION_NAME: 4iren-gateway
+
+x-eureka-template: &eureka-base
+  <<: *common-template
+  image: ghcr.io/${DOCKER_USERNAME}/team4-eureka:latest
+  environment:
+    SPRING_APPLICATION_NAME: 4iren-eureka
+
+x-config-template: &config-base
+  <<: *common-template
+  image: ghcr.io/${DOCKER_USERNAME}/team4-config:latest
+  environment:
+    SPRING_APPLICATION_NAME: 4iren-config
+
+x-account-template: &account-base
+  <<: *depends-template
+  image: ghcr.io/${DOCKER_USERNAME}/team4-account:latest
+  environment:
+    SPRING_APPLICATION_NAME: 4iren-account
+
+x-auth-template: &auth-base
+  <<: *depends-template
+  image: ghcr.io/${DOCKER_USERNAME}/team4-auth:latest
+  environment:
+    SPRING_APPLICATION_NAME: 4iren-auth
+
+x-recommendation-template: &recommendation-base
+  <<: *depends-template
+  image: ghcr.io/${DOCKER_USERNAME}/team4-recommendation:latest
+  environment:
+    SPRING_APPLICATION_NAME: 4iren-recommendation
+
+x-core-template: &core-base
+  <<: *depends-template
+  image: ghcr.io/${DOCKER_USERNAME}/team4-core:latest
+  environment:
+    SPRING_APPLICATION_NAME: 4iren-core
+
+x-notification-template: &notification-base
+  <<: *depends-template
+  image: ghcr.io/${DOCKER_USERNAME}/team4-notification:latest
+  environment:
+    SPRING_APPLICATION_NAME: 4iren-notification
+    SPRING_PROFILES_ACTIVE: prod
+
+x-processing-template: &processing-base
+  <<: *depends-template
+  image: ghcr.io/${DOCKER_USERNAME}/team4-processing:latest
+  environment:
+    SPRING_APPLICATION_NAME: 4iren-processing
+
+x-rule-engine-template: &rule-engine-base
+  <<: *depends-template
+  image: ghcr.io/${DOCKER_USERNAME}/team4-rule-engine:latest
+  environment:
+    SPRING_APPLICATION_NAME: 4iren-rule-engine
+    SPRING_PROFILES_ACTIVE: prod
+
+x-payment-template: &payment-base
+  <<: *depends-template
+  image: ghcr.io/${DOCKER_USERNAME}/team4-payment:latest
+  environment:
+    SPRING_APPLICATION_NAME: 4iren-payment
+    SPRING_PROFILES_ACTIVE: prod
+
+# 실제 실행 컨테이너 목록
+services:
+  team4-front-1:
+    <<: *front-base
+    container_name: team4-front-1
+  team4-front-2:
+    <<: *front-base
+    container_name: team4-front-2
+
+  team4-gateway-1:
+    <<: *gateway-base
+    container_name: team4-gateway-1
+  team4-gateway-2:
+    <<: *gateway-base
+    container_name: team4-gateway-2
+
+  team4-eureka-1:
+    <<: *eureka-base
+    container_name: team4-eureka-1
+    environment:
+      SERVER_PORT: 8761
+      SPRING_APPLICATION_NAME: 4iren-eureka
+      SPRING_PROFILES_ACTIVE: eureka1
+      EUREKA_INSTANCE_HOSTNAME: 4iren-eureka-1
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://team4-eureka-2:8762/eureka/
+  team4-eureka-2:
+    <<: *eureka-base
+    container_name: team4-eureka-2
+    environment:
+      SERVER_PORT: 8762
+      SPRING_APPLICATION_NAME: 4iren-eureka
+      SPRING_PROFILES_ACTIVE: eureka2
+      EUREKA_INSTANCE_HOSTNAME: 4iren-eureka-2
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://team4-eureka-1:8761/eureka/
+
+  team4-config-1:
+    <<: *config-base
+    container_name: team4-config-1
+  team4-config-2:
+    <<: *config-base
+    container_name: team4-config-2
+
+  team4-account-1:
+    <<: *account-base
+    container_name: team4-account-1
+  team4-account-2:
+    <<: *account-base
+    container_name: team4-account-2
+
+  team4-auth-1:
+    <<: *auth-base
+    container_name: team4-auth-1
+  team4-auth-2:
+    <<: *auth-base
+    container_name: team4-auth-2
+
+  team4-recommendation-1:
+    <<: *recommendation-base
+    container_name: team4-recommendation-1
+  team4-recommendation-2:
+    <<: *recommendation-base
+    container_name: team4-recommendation-2
+
+  team4-core-1:
+    <<: *core-base
+    container_name: team4-core-1
+  team4-core-2:
+    <<: *core-base
+    container_name: team4-core-2
+
+  team4-notification-1:
+    <<: *notification-base
+    container_name: team4-notification-1
+  team4-notification-2:
+    <<: *notification-base
+    container_name: team4-notification-2
+
+  team4-processing-1:
+    <<: *processing-base
+    container_name: team4-processing-1
+
+  team4-rule-engine-1:
+    <<: *rule-engine-base
+    container_name: team4-rule-engine-1
+  team4-rule-engine-2:
+    <<: *rule-engine-base
+    container_name: team4-rule-engine-2
+
+  team4-payment-1:
+    <<: *payment-base
+    container_name: team4-payment-1
+  team4-payment-2:
+    <<: *payment-base
+    container_name: team4-payment-2
+
+networks:
+  team4-aiot-network:
+    external: true

@@ -1,0 +1,25 @@
+filebeat.autodiscover:
+  providers:
+    - type: docker
+      templates:
+        - condition:
+            and:
+              - contains:
+                  docker.container.name: "team4"
+              - not:
+                  equals:
+                    docker.container.name: "team4-filebeat"
+          config:
+            - type: container
+              paths:
+                - "/var/lib/docker/containers/${data.docker.container.id}/*.log"
+
+output.elasticsearch:
+  hosts: ["http://s4.java21.net:9200"]
+  index: "4iren-v2-log-%{+yyyy.MM.dd}"
+  username: "${ELASTICSEARCH_ID}"
+  password: "${ELASTICSEARCH_PASSWORD}"
+
+setup.template.name: "4iren-v2-log"
+setup.template.pattern: "4iren-v2-log-*"
+setup.ilm.enabled: false

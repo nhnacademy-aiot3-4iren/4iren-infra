@@ -1,0 +1,28 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  # 1. 자기 자신 상태 수집
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # 2. 유레카 연동 & 자동 탐색
+  - job_name: 'eureka-discovery'
+    eureka_sd_configs:
+      - server: 'http://team4-eureka-1:8761/eureka'
+
+    # 유레카에서 가져온 데이터를 라벨링 가공
+    relabel_configs:
+      # 수집 경로를 스프링 부트 기본 경로로 강제 설정
+      - source_labels: [__metrics_path__]
+        target_label: __metrics_path__
+        replacement: /actuator/prometheus
+
+      # 유레카에 등록된 앱 이름을 그라파나에서 보기 좋게 application 라벨로 저장
+      - source_labels: [__meta_eureka_app_name]
+        target_label: application
+
+      # 유레카에 등록된 인스턴스 ID를 instance 라벨로 저장
+      - source_labels: [__meta_eureka_app_instance_id]
+        target_label: instance
